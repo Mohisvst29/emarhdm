@@ -23,6 +23,7 @@ export default function Home({ onNavigate, settings }) {
   }, [heroBackgrounds.length]);
 
   const [services, setServices] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     fetch('/api/services')
@@ -33,6 +34,15 @@ export default function Home({ onNavigate, settings }) {
         }
       })
       .catch(err => console.error('Error fetching services for home:', err));
+
+    fetch('/api/projects')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data.length > 0) {
+          setProjects(data.data);
+        }
+      })
+      .catch(err => console.error('Error fetching projects for home:', err));
   }, []);
 
   return (
@@ -319,83 +329,32 @@ export default function Home({ onNavigate, settings }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-space-md">
-            {/* Featured Project */}
-            <div className="md:col-span-8 group relative rounded-DEFAULT overflow-hidden bg-surface-container-highest aspect-[16/10] shadow-sm border border-outline-variant/40">
-              <img
-                src="/images/construction.png"
-                alt="مشروع هدم كلي لمبنى تجاري بالدمام"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-container via-primary-container/40 to-transparent"></div>
-              <div className="absolute bottom-0 inset-x-0 p-space-lg text-right flex flex-col items-start">
-                <span className="px-space-xs py-space-2xs bg-secondary text-on-secondary rounded-DEFAULT font-label-sm text-label-sm font-bold mb-space-2xs">
-                  هدم كلي وتسوية
-                </span>
-                <h3 className="font-headline-sm text-headline-sm font-bold text-surface">
-                  مشروع هدم هيكل خرساني وترحيل مخلفات - الدمام
-                </h3>
-                <p className="font-body-sm text-body-sm text-surface-variant mt-space-2xs">
-                  إزالة 3 طوابق خرسانية مع ترحيل 420 طن أنقاض وتسليم الأرض مستوية للبدء بأعمال الأساسات الجديدة.
-                </p>
-              </div>
-            </div>
-
-            {/* Project 2 */}
-            <div className="md:col-span-4 group relative rounded-DEFAULT overflow-hidden bg-surface-container-highest aspect-[4/3] md:aspect-auto shadow-sm border border-outline-variant/40">
-              <img
-                src="/images/selective_demolition.png"
-                alt="هدم جزئي وتوسعة مبنى سكني"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-container via-primary-container/40 to-transparent"></div>
-              <div className="absolute bottom-0 inset-x-0 p-space-md text-right flex flex-col items-start">
-                <span className="px-space-xs py-space-2xs bg-surface-container-highest text-on-surface rounded-DEFAULT font-label-sm text-label-sm font-bold mb-space-2xs">
-                  هدم جزئي
-                </span>
-                <h3 className="font-headline-sm text-headline-sm font-bold text-surface">
-                  هدم جزئي وتوسعة واجهات - حي الشاطئ
-                </h3>
-              </div>
-            </div>
-
-            {/* Project 3 */}
-            <div className="md:col-span-4 group relative rounded-DEFAULT overflow-hidden bg-surface-container-highest aspect-[4/3] shadow-sm border border-outline-variant/40">
-              <img
-                src="/images/tile_removal.png"
-                alt="تكسير سيراميك وتجريد أرضيات صالة عرض"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-container via-primary-container/40 to-transparent"></div>
-              <div className="absolute bottom-0 inset-x-0 p-space-md text-right flex flex-col items-start">
-                <span className="px-space-xs py-space-2xs bg-surface-container-highest text-on-surface rounded-DEFAULT font-label-sm text-label-sm font-bold mb-space-2xs">
-                  إزالة أرضيات
-                </span>
-                <h3 className="font-headline-sm text-headline-sm font-bold text-surface">
-                  تجريد سيراميك وتجهيز معرض تجاري 800م²
-                </h3>
-              </div>
-            </div>
-
-            {/* Project 4 */}
-            <div className="md:col-span-8 group relative rounded-DEFAULT overflow-hidden bg-surface-container-highest aspect-[16/9] shadow-sm border border-outline-variant/40">
-              <img
-                src="/images/renovation.png"
-                alt="تكسير قواطع وترميم داخلي مكتبي"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-container via-primary-container/40 to-transparent"></div>
-              <div className="absolute bottom-0 inset-x-0 p-space-lg text-right flex flex-col items-start">
-                <span className="px-space-xs py-space-2xs bg-secondary text-on-secondary rounded-DEFAULT font-label-sm text-label-sm font-bold mb-space-2xs">
-                  ترميم وتعديل داخلي
-                </span>
-                <h3 className="font-headline-sm text-headline-sm font-bold text-surface">
-                  تكسير جدران وإعادة توزيع مساحات إدارية - الدمام
-                </h3>
-                <p className="font-body-sm text-body-sm text-surface-variant mt-space-2xs">
-                  تفريغ قواطع بلوك داخلية وفصل التمديدات مع المحافظة التامة على البنية الإنشائية لبرج مكتبي.
-                </p>
-              </div>
-            </div>
+            {projects.slice(0, 4).map((prj, idx) => {
+              const isLarge = idx === 0 || idx === 3;
+              const spanClass = isLarge ? 'md:col-span-8' : 'md:col-span-4';
+              const aspectClass = isLarge ? 'aspect-[16/10]' : 'aspect-[4/3]';
+              return (
+                <div key={prj.id || idx} className={`${spanClass} group relative rounded-DEFAULT overflow-hidden bg-surface-container-highest ${aspectClass} shadow-sm border border-outline-variant/40`}>
+                  <img
+                    src={prj.image || '/images/construction.png'}
+                    alt={prj.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-container via-primary-container/40 to-transparent"></div>
+                  <div className="absolute bottom-0 inset-x-0 p-space-lg text-right flex flex-col items-start">
+                    <span className="px-space-xs py-space-2xs bg-secondary text-on-secondary rounded-DEFAULT font-label-sm text-label-sm font-bold mb-space-2xs">
+                      {prj.category || 'هدم ومقاولات'}
+                    </span>
+                    <h3 className="font-headline-sm text-headline-sm font-bold text-surface">
+                      {prj.title}
+                    </h3>
+                    <p className="font-body-sm text-body-sm text-surface-variant mt-space-2xs line-clamp-2">
+                      {prj.description || prj.desc || prj.location}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
