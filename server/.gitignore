@@ -1,0 +1,4 @@
+.env
+demolition.db
+node_modules/
+uploads/
