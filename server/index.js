@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const { Setting, Service, Project, Request, Article } = require('./db');
+const { ensureConnected, seedDefaults, Setting, Service, Project, Request, Article } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -10,6 +10,16 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Ensure MongoDB Atlas Connection on all API requests (Vercel Serverless & Local)
+app.use(async (req, res, next) => {
+  try {
+    await ensureConnected();
+  } catch (err) {
+    console.error('DB middleware error:', err);
+  }
+  next();
+});
 
 // Serve static assets from public images folder
 app.use('/images', express.static(path.join(__dirname, '../client/public/images')));
@@ -270,7 +280,11 @@ app.delete('/api/requests/:id', async (req, res) => {
 // API: Services CRUD
 app.get('/api/services', async (req, res) => {
   try {
-    const services = await Service.find({});
+    let services = await Service.find({});
+    if (services.length === 0) {
+      await seedDefaults();
+      services = await Service.find({});
+    }
     res.json({ success: true, data: services });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error' });

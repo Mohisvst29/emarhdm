@@ -68,13 +68,28 @@ const Request = mongoose.model('Request', RequestSchema);
 const Article = mongoose.model('Article', ArticleSchema);
 
 // Connection & Seeding
-async function connectDb() {
+let isConnecting = null;
+
+async function ensureConnected() {
+  if (mongoose.connection.readyState === 1) {
+    return;
+  }
+  if (isConnecting) {
+    await isConnecting;
+    return;
+  }
   try {
-    await mongoose.connect(MONGODB_URI);
+    isConnecting = mongoose.connect(MONGODB_URI, {
+      bufferCommands: true,
+      serverSelectionTimeoutMS: 5000
+    });
+    await isConnecting;
     console.log('MongoDB Atlas Connected Successfully!');
     await seedDefaults();
   } catch (error) {
     console.error('MongoDB connection error:', error);
+  } finally {
+    isConnecting = null;
   }
 }
 
@@ -417,9 +432,11 @@ async function seedDefaults() {
   }
 }
 
-connectDb();
+ensureConnected();
 
 module.exports = {
+  ensureConnected,
+  seedDefaults,
   Setting,
   Service,
   Project,

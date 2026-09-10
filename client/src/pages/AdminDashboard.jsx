@@ -156,7 +156,17 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
 
       if (reqData.success) setRequests(reqData.data);
       if (statsData.success) setStats(statsData.data);
-      if (srvData.success) setServices(srvData.data);
+      if (srvData.success) {
+        if (srvData.data && srvData.data.length === 0) {
+          fetch('/api/services/reset-defaults', { method: 'POST' })
+            .then(res => res.json())
+            .then(resData => {
+              if (resData.success) fetchAllData();
+            });
+        } else {
+          setServices(srvData.data);
+        }
+      }
       if (prjData.success) setProjects(prjData.data);
       if (setData.success && Object.keys(setData.data).length > 0) setSettings(setData.data);
       if (artData.success) setArticles(artData.data);
