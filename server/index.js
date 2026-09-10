@@ -28,21 +28,27 @@ app.post('/api/upload', (req, res) => {
       return res.json({ success: true, url: data, message: 'تم التمرير بنجاح' });
     }
 
-    const extMatch = matches[1].match(/\/([a-zA-Z0-9]+)$/);
-    const ext = extMatch ? extMatch[1] : 'png';
-    const filename = `img_${Date.now()}_${Math.floor(Math.random() * 1000)}.${ext}`;
-    const targetDir = path.join(__dirname, '../client/public/images/uploads');
+    try {
+      const extMatch = matches[1].match(/\/([a-zA-Z0-9]+)$/);
+      const ext = extMatch ? extMatch[1] : 'png';
+      const filename = `img_${Date.now()}_${Math.floor(Math.random() * 1000)}.${ext}`;
+      const targetDir = path.join(__dirname, '../client/public/images/uploads');
 
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true });
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+      }
+
+      const buffer = Buffer.from(matches[2], 'base64');
+      const filePath = path.join(targetDir, filename);
+      fs.writeFileSync(filePath, buffer);
+
+      const publicUrl = `/images/uploads/${filename}`;
+      return res.json({ success: true, url: publicUrl, message: 'تم رفع الصورة وحفظها بنجاح' });
+    } catch (fsErr) {
+      console.warn('Filesystem write failed (likely serverless read-only), using base64 data URL fallback:', fsErr.message);
+      // Fallback for Vercel Serverless environment where local disk is read-only
+      return res.json({ success: true, url: data, message: 'تم التمرير بنجاح' });
     }
-
-    const buffer = Buffer.from(matches[2], 'base64');
-    const filePath = path.join(targetDir, filename);
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = `/images/uploads/${filename}`;
-    res.json({ success: true, url: publicUrl, message: 'تم رفع الصورة وحفظها بنجاح' });
   } catch (error) {
     console.error('Error uploading file:', error);
     res.status(500).json({ success: false, message: 'حدث خطأ أثناء حفظ الملف على الخادم' });
