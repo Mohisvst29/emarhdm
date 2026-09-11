@@ -592,12 +592,11 @@ app.get('/sitemap.xml', async (req, res) => {
 
     const staticPages = [
       { path: '', priority: '1.0', changefreq: 'daily' },
-      { path: '#/home', priority: '1.0', changefreq: 'daily' },
-      { path: '#/about-us', priority: '0.85', changefreq: 'weekly' },
-      { path: '#/our-services', priority: '0.95', changefreq: 'daily' },
-      { path: '#/our-work', priority: '0.85', changefreq: 'weekly' },
-      { path: '#/articles', priority: '0.90', changefreq: 'daily' },
-      { path: '#/contact-us', priority: '0.80', changefreq: 'monthly' }
+      { path: 'about-us', priority: '0.85', changefreq: 'weekly' },
+      { path: 'our-services', priority: '0.95', changefreq: 'daily' },
+      { path: 'our-work', priority: '0.85', changefreq: 'weekly' },
+      { path: 'articles', priority: '0.90', changefreq: 'daily' },
+      { path: 'contact-us', priority: '0.80', changefreq: 'monthly' }
     ];
 
     const services = await Service.find({});
@@ -613,15 +612,15 @@ app.get('/sitemap.xml', async (req, res) => {
     });
 
     services.forEach(s => {
-      xml += `  <url>\n    <loc>${baseUrl}/#/our-services?srv=${encodeURIComponent(s.id)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.85</priority>\n  </url>\n`;
+      xml += `  <url>\n    <loc>${baseUrl}/our-services?srv=${encodeURIComponent(s.id)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.85</priority>\n  </url>\n`;
     });
 
     projects.forEach(prj => {
-      xml += `  <url>\n    <loc>${baseUrl}/#/our-work?prj=${prj.id}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.75</priority>\n  </url>\n`;
+      xml += `  <url>\n    <loc>${baseUrl}/our-work?prj=${prj.id}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.75</priority>\n  </url>\n`;
     });
 
     articles.forEach(art => {
-      xml += `  <url>\n    <loc>${baseUrl}/#/articles/${art.slug}</loc>\n    <lastmod>${art.date ? art.date.replace(/\//g, '-') : today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+      xml += `  <url>\n    <loc>${baseUrl}/articles/${art.slug}</loc>\n    <lastmod>${art.date ? art.date.replace(/\//g, '-') : today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
     });
 
     xml += `</urlset>`;
@@ -642,8 +641,8 @@ app.get('/robots.txt', (req, res) => {
 
   const robots = `User-agent: *
 Allow: /
-Disallow: /#/admin-dashboard
-Disallow: /#/admin
+Disallow: /admin-dashboard
+Disallow: /admin
 
 Sitemap: ${baseUrl}/sitemap.xml
 `;

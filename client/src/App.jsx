@@ -42,27 +42,61 @@ export default function App() {
     fetchSettings();
   }, [currentPath]);
 
-  // Sync with browser URL / hash if present
+  // Sync with browser Clean HTML5 Path & legacy hash
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#/', '').replace('#', '');
-      const parts = hash.split('/');
-      const path = parts[0] || 'home';
-      const param = parts[1] || '';
+    const syncRoute = () => {
+      const hash = window.location.hash.replace('#/', '').replace('#', '').trim();
+      const pathname = window.location.pathname.trim();
+      const search = window.location.search;
+
+      let path = 'home';
+      let param = '';
+
+      if (hash) {
+        const parts = hash.split('/');
+        path = parts[0] || 'home';
+        param = parts[1] || '';
+      } else if (pathname && pathname !== '/') {
+        const parts = pathname.replace(/^\//, '').split('/');
+        path = parts[0] || 'home';
+        param = parts[1] || '';
+      }
+
+      // Query param fallback (e.g. ?srv=srv-1)
+      if (search.includes('srv=')) {
+        const srvId = new URLSearchParams(search).get('srv');
+        if (srvId) param = srvId;
+      }
 
       setCurrentPath(path);
-      if (param) setArticleSlug(param);
+      setArticleSlug(param);
     };
 
-    handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    syncRoute();
+    window.addEventListener('popstate', syncRoute);
+    window.addEventListener('hashchange', syncRoute);
+
+    return () => {
+      window.removeEventListener('popstate', syncRoute);
+      window.removeEventListener('hashchange', syncRoute);
+    };
   }, []);
 
   const handleNavigate = (path, param = '') => {
     setCurrentPath(path);
-    if (param) setArticleSlug(param);
-    window.location.hash = param ? `#/${path}/${param}` : `#/${path}`;
+    setArticleSlug(param);
+
+    let targetUrl = '/';
+    if (path && path !== 'home') {
+      targetUrl = param ? `/${path}/${param}` : `/${path}`;
+    }
+
+    try {
+      window.history.pushState(null, '', targetUrl);
+    } catch (e) {
+      window.location.hash = param ? `#/${path}/${param}` : `#/${path}`;
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -86,7 +120,7 @@ export default function App() {
         return <Projects onNavigate={handleNavigate} />;
       case 'articles':
       case 'blog':
-        if (articleSlug && currentPath === 'articles' && window.location.hash.includes('/articles/')) {
+        if (articleSlug) {
           return <ArticleDetail articleSlug={articleSlug} onNavigate={handleNavigate} />;
         }
         return <Articles onNavigate={handleNavigate} />;
@@ -114,8 +148,7 @@ export default function App() {
       <Header currentPath={currentPath} onNavigate={handleNavigate} settings={settings} />
       
       <main className="w-full pt-20 flex-grow">
-        {/* Smooth Page Enter Transition Wrapper */}
-        <div key={currentPath} className="animate-page-enter">
+        <div key={`${currentPath}-${articleSlug}`} className="animate-page-enter">
           {renderPage()}
         </div>
       </main>
