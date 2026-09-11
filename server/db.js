@@ -1,7 +1,7 @@
 require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const mongoose = require('mongoose');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://mshebl215_db_user:aJjcEGq14Ydfiq2m@cluster01.imv0ivg.mongodb.net/demolition_db?retryWrites=true&w=majority&appName=Cluster01';
+const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/demolition_db';
 
 // Mongoose Schemas & Models
 const SettingSchema = new mongoose.Schema({

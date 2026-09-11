@@ -169,15 +169,17 @@ app.post('/api/admin/change-credentials', async (req, res) => {
 // API: Get all requests (with filtering & search)
 app.get('/api/requests', async (req, res) => {
   try {
-    const { status, search } = req.query;
+    const statusParam = typeof req.query.status === 'string' ? req.query.status.trim() : '';
+    const searchParam = typeof req.query.search === 'string' ? req.query.search.trim() : '';
     let filter = {};
 
-    if (status && status !== 'all' && status !== 'الكل') {
-      filter.status = status;
+    if (statusParam && statusParam !== 'all' && statusParam !== 'الكل') {
+      filter.status = statusParam;
     }
 
-    if (search) {
-      const searchRegex = new RegExp(search, 'i');
+    if (searchParam) {
+      const escapedSearch = searchParam.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escapedSearch, 'i');
       filter.$or = [
         { name: searchRegex },
         { location: searchRegex },
