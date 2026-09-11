@@ -586,7 +586,8 @@ app.get('/api/export', async (req, res) => {
 app.get('/sitemap.xml', async (req, res) => {
   try {
     const host = req.get('host');
-    const baseUrl = (host && !host.includes('localhost')) ? `${req.protocol}://${host}` : 'https://www.eamareldamam.com';
+    const proto = req.get('x-forwarded-proto') || 'https';
+    const baseUrl = (host && !host.includes('localhost')) ? `${proto}://${host}` : 'https://www.eamareldamam.com';
     const today = new Date().toISOString().split('T')[0];
 
     const staticPages = [
@@ -636,7 +637,8 @@ app.get('/sitemap.xml', async (req, res) => {
 // Dynamic Robots.txt Route
 app.get('/robots.txt', (req, res) => {
   const host = req.get('host');
-  const baseUrl = (host && !host.includes('localhost')) ? `${req.protocol}://${host}` : 'https://www.eamareldamam.com';
+  const proto = req.get('x-forwarded-proto') || 'https';
+  const baseUrl = (host && !host.includes('localhost')) ? `${proto}://${host}` : 'https://www.eamareldamam.com';
 
   const robots = `User-agent: *
 Allow: /
