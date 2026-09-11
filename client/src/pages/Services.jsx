@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SEOHead from '../components/SEOHead';
 
 export default function Services({ onNavigate }) {
   const [services, setServices] = useState([]);
@@ -18,6 +19,10 @@ export default function Services({ onNavigate }) {
 
   return (
     <div className="flex flex-col w-full text-right">
+      <SEOHead 
+        title="خدمات الهدم والتكسير والسفلتة بالدمام"
+        description="خدمات هدم المباني الكلي والجزئي، تكسير السيراميك والجدران، أعمال الأسفلت، ترحيل الأنقاض وشراء سكراب بالدمام والشرقية. اتصل الآن: 0546735579"
+      />
       
       {/* Header Banner */}
       <section className="w-full bg-surface-container-low px-gutter-mobile lg:px-gutter-desktop py-space-2xl border-b border-outline-variant/30">

@@ -1,8 +1,13 @@
 import React from 'react';
+import SEOHead from '../components/SEOHead';
 
 export default function About({ onNavigate, settings }) {
   return (
     <div className="flex flex-col w-full text-right">
+      <SEOHead 
+        title="من نحن - مؤسسة إعمار وهدم للمقاولات بالدمام"
+        description="تعرف على مؤسسة إعمار وهدم للمقاولات العامة بالدمام والمنطقة الشرقية. خبرة في الهدم الكلي والجزئي، تكسير السيراميك والجدران، وتجهيز المواقع بأعلى معايير السلامة. اتصل الآن: 0546735579"
+      />
       
       {/* SECTION 1: Architectural Hero Header */}
       <section className="relative w-full bg-surface-container-low py-space-3xl border-b border-outline-variant/30">

@@ -1,0 +1,8 @@
+# Robots.txt for https://www.eamareldamam.com/
+User-agent: *
+Allow: /
+Disallow: /#/admin-dashboard
+Disallow: /#/admin
+
+# Sitemap URL for Googlebot & search engine crawlers
+Sitemap: https://www.eamareldamam.com/sitemap.xml

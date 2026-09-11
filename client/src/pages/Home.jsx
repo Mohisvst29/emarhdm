@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SEOHead from '../components/SEOHead';
 
 export default function Home({ onNavigate, settings }) {
   // Multi Hero Background Images Carousel
@@ -47,6 +48,10 @@ export default function Home({ onNavigate, settings }) {
 
   return (
     <div className="flex flex-col w-full">
+      <SEOHead 
+        title="مؤسسة هدم مباني وتكسير بالدمام والشرقية"
+        description="مؤسسة إعمار وهدم للمقاولات العامة بالدمام والمنطقة الشرقية. هدم مباني كلي وجزئي، تكسير سيراميك وجدران، سفلتة طرق وشراء سكراب المباني. اتصل بنا: 0546735579"
+      />
       
       {/* 1. CINEMATIC ARCHITECTURAL HERO WITH MULTI-BACKGROUND SLIDER */}
       <section className="relative w-full bg-primary-container text-surface overflow-hidden pt-12 pb-space-4xl">

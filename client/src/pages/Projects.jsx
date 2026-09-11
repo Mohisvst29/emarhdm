@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SEOHead from '../components/SEOHead';
 
 export default function Projects({ onNavigate }) {
   const [filter, setFilter] = useState('all');
@@ -67,6 +68,10 @@ export default function Projects({ onNavigate }) {
 
   return (
     <div className="flex flex-col w-full text-right">
+      <SEOHead 
+        title="أعمالنا ومشاريعنا في هدم المباني بالدمام"
+        description="معرض صور وسجل مشاريع مؤسسة إعمار وهدم للمقاولات العامة بالدمام والشرقية. هدم فلل ومباني، تكسير سيراميك، وإزالات سريعة. للتواصل والطلب مباشر: 0546735579"
+      />
       
       {/* Header */}
       <section className="w-full bg-surface-container-low px-gutter-mobile lg:px-gutter-desktop py-space-2xl border-b border-outline-variant/30">

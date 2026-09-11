@@ -585,17 +585,18 @@ app.get('/api/export', async (req, res) => {
 // Dynamic Sitemap.xml Route (Auto-Indexes all site pages, services, projects, articles)
 app.get('/sitemap.xml', async (req, res) => {
   try {
-    const host = req.get('host') || 'localhost:5000';
-    const baseUrl = `${req.protocol}://${host}`;
+    const host = req.get('host');
+    const baseUrl = (host && !host.includes('localhost')) ? `${req.protocol}://${host}` : 'https://www.eamareldamam.com';
     const today = new Date().toISOString().split('T')[0];
 
     const staticPages = [
+      { path: '', priority: '1.0', changefreq: 'daily' },
       { path: '#/home', priority: '1.0', changefreq: 'daily' },
-      { path: '#/about-us', priority: '0.8', changefreq: 'weekly' },
-      { path: '#/our-services', priority: '0.9', changefreq: 'daily' },
-      { path: '#/our-work', priority: '0.8', changefreq: 'weekly' },
-      { path: '#/articles', priority: '0.9', changefreq: 'daily' },
-      { path: '#/contact-us', priority: '0.8', changefreq: 'monthly' }
+      { path: '#/about-us', priority: '0.85', changefreq: 'weekly' },
+      { path: '#/our-services', priority: '0.95', changefreq: 'daily' },
+      { path: '#/our-work', priority: '0.85', changefreq: 'weekly' },
+      { path: '#/articles', priority: '0.90', changefreq: 'daily' },
+      { path: '#/contact-us', priority: '0.80', changefreq: 'monthly' }
     ];
 
     const services = await Service.find({});
@@ -606,7 +607,8 @@ app.get('/sitemap.xml', async (req, res) => {
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n`;
 
     staticPages.forEach(p => {
-      xml += `  <url>\n    <loc>${baseUrl}/${p.path}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>\n`;
+      const loc = p.path ? `${baseUrl}/${p.path}` : `${baseUrl}/`;
+      xml += `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>\n`;
     });
 
     services.forEach(s => {
@@ -633,12 +635,13 @@ app.get('/sitemap.xml', async (req, res) => {
 
 // Dynamic Robots.txt Route
 app.get('/robots.txt', (req, res) => {
-  const host = req.get('host') || 'localhost:5000';
-  const baseUrl = `${req.protocol}://${host}`;
+  const host = req.get('host');
+  const baseUrl = (host && !host.includes('localhost')) ? `${req.protocol}://${host}` : 'https://www.eamareldamam.com';
 
   const robots = `User-agent: *
 Allow: /
 Disallow: /#/admin-dashboard
+Disallow: /#/admin
 
 Sitemap: ${baseUrl}/sitemap.xml
 `;

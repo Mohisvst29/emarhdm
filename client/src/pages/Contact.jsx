@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SEOHead from '../components/SEOHead';
 
 export default function Contact({ onNavigate }) {
   const [formData, setFormData] = useState({
@@ -75,6 +76,10 @@ export default function Contact({ onNavigate }) {
 
   return (
     <div className="flex flex-col w-full text-right">
+      <SEOHead 
+        title="اتصل بنا - هدم المباني بالدمام 0546735579"
+        description="تواصل مباشرة مع فريق مؤسسة إعمار وهدم للمقاولات العامة بالدمام والمنطقة الشرقية. اتصل الآن على 0546735579 أو تراسل واتساب 0542703260 لطلب معاينة فورية مجانية للموقع."
+      />
       
       {/* Top Visual Strip */}
       <section className="relative w-full bg-primary-container text-surface overflow-hidden border-b border-outline-variant/30">
